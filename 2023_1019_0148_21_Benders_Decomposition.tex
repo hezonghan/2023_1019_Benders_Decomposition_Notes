@@ -1,0 +1,141 @@
+
+\documentclass[twocolumn]{ctexart}
+% \documentclass[onecolumn]{ctexart}
+
+\usepackage{geometry}
+\geometry{a4paper,left=1cm,right=1cm,top=1.4cm,bottom=1cm}
+
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{xcolor}
+\usepackage{graphicx}  % for \resizebox
+\usepackage{arydshln}
+
+
+
+\usepackage{hyperref}
+\hypersetup{
+    pdfstartview={XYZ null null 1.25},  % XYZ <left> <top> <zoom> : Sets a coordinate and a zoom factor. If anyone is null, the source link value is used.
+    % pdfstartview={FitH  null},           % FitH <top> : fit the width of the page to the window
+    pdfpagelayout=OneColumn,  % SinglePage/OneColumn/...
+    % 
+    bookmarks=true,
+    bookmarksnumbered=true,
+    bookmarksopen=true,  % whether bookmark tree is expanded when open
+    pdfpagemode=UseOutlines,  % UseOutlines: show bookmarks when open
+    % 
+    linkbordercolor=blue,
+}
+
+
+
+\begin{document}
+
+\leftline{2023\_1019\_0148\_21}
+
+% IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+\section{LP and Duality}
+
+% =================================================================
+\subsection{Standard Form of LP}
+
+Any unbounded variable $x$ can be replaced into a pair of non-negative variables $(u,v)$.
+\begin{equation}
+    \begin{aligned}
+        % \label{eq:}
+        \begin{cases}
+            x = u - v \\
+            u \geq 0  \\
+            v \geq 0  \\
+        \end{cases}
+    \end{aligned}
+\end{equation}
+
+Any in-equality constraint can be converted into an equality constraint,
+by introducing an additional assistant non-negative variable $x'$.
+\begin{equation}
+    \begin{aligned}
+        \label{eq:}
+        \mathbf{a}_i^T  \mathbf{x}  \geq  b_i
+        & \qquad \Leftrightarrow \qquad
+        \begin{cases}
+            \mathbf{a}_i^T \mathbf{x}  -  x'  &=  b_i \\
+            x' &\geq 0 \\
+        \end{cases}
+        \\
+        & \qquad \Leftrightarrow \qquad
+        \begin{cases}
+            \begin{bmatrix} \mathbf{a}_i^T &  (-1) \end{bmatrix}
+            \begin{bmatrix} \mathbf{x}     \\ x' \end{bmatrix}
+            &= b_i
+            \\
+            x' &\geq 0 \\
+        \end{cases}
+    \end{aligned}
+\end{equation}
+
+So we can safely represent any LP problem in its standard form,
+with only non-negative variables and only equality constraints.
+
+
+% =================================================================
+\subsection{Definition of Dual}
+
+Assume
+$\mathbf{A} \in \mathbb{R}^{m \times n}$
+,
+$\mathbf{b} \in \mathbb{R}^{m \times 1}$
+,
+$\mathbf{c} \in \mathbb{R}^{n \times 1}$
+.
+% A LP problem
+The Linear Programming (LP) problem
+\begin{equation}
+    \begin{aligned}
+        % \label{eq:}
+        \text{Minimize} \qquad &
+            \mathbf{c}^T  \mathbf{\color{red} x}
+        \\
+        \text{s.t.} \qquad &
+            % &  A  \mathbf{x}  &  \geq  \mathbf{b}  \\
+            % &     \mathbf{x}  &   \geq  \mathbf{0}  \\
+            \begin{cases}
+                \mathbf{A}  \mathbf{\color{red} x}  &  \geq  \mathbf{b}  {\color{gray} \quad \in \mathbb{R}^{m \times 1}}  \\
+                            \mathbf{\color{red} x}  &  \geq  \mathbf{0}  {\color{gray} \quad \in \mathbb{R}^{n \times 1}}  \\
+            \end{cases}
+    \end{aligned}
+\end{equation}
+has a dual problem
+\begin{equation}
+    \begin{aligned}
+        % \label{eq:}
+        \text{Maximize} \qquad &
+            \mathbf{b}^T  \mathbf{\color{red} \lambda}
+        \\
+        \text{s.t.} \qquad &
+            \begin{cases}
+                \mathbf{A}^T  \mathbf{\color{red} \lambda}  &  \leq  \mathbf{c}  {\color{gray} \quad \in \mathbb{R}^{n \times 1}}  \\
+                              \mathbf{\color{red} \lambda}  &  \geq  \mathbf{0}  {\color{gray} \quad \in \mathbb{R}^{m \times 1}}  \\
+            \end{cases}
+    \end{aligned}
+\end{equation}
+
+
+
+\subsection{The Duality Theorem}
+
+
+
+
+\begin{equation}
+    \begin{aligned}
+        \label{eq:}
+    \end{aligned}
+\end{equation}
+
+
+
+
+
+
+\end{document}
+

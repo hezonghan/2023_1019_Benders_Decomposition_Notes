@@ -20,8 +20,8 @@
     % 
     bookmarks=true,
     bookmarksnumbered=true,
-    bookmarksopen=true,  % whether bookmark tree is expanded when open
-    pdfpagemode=UseOutlines,  % UseOutlines: show bookmarks when open
+    bookmarksopen=true,  % whether bookmark tree is expanded when opening pdf
+    pdfpagemode=UseOutlines,  % UseOutlines: show bookmarks panel when opening pdf
     % 
     linkbordercolor=blue,
 }
@@ -32,16 +32,22 @@
 
 \leftline{2023\_1019\_0148\_21}
 
+
+
+
+
 % IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
-\section{LP and Duality}
+\vspace{30pt}
+\section{Preliminaries}
 
 % =================================================================
+% \iffalse
 \subsection{Standard Form of LP}
 
-Any unbounded variable $x$ can be replaced into a pair of non-negative variables $(u,v)$.
+Any unbounded variable $x$ can be replaced by a pair of non-negative variables $(u,v)$.
 \begin{equation}
     \begin{aligned}
-        % \label{eq:}
+        \label{eq:var_unbounded_to_nonnegative}
         \begin{cases}
             x = u - v \\
             u \geq 0  \\
@@ -54,7 +60,7 @@ Any in-equality constraint can be converted into an equality constraint,
 by introducing an additional assistant non-negative variable $x'$.
 \begin{equation}
     \begin{aligned}
-        \label{eq:}
+        \label{eq:cons_inequal_to_equal}
         \mathbf{a}_i^T  \mathbf{x}  \geq  b_i
         & \qquad \Leftrightarrow \qquad
         \begin{cases}
@@ -73,12 +79,129 @@ by introducing an additional assistant non-negative variable $x'$.
     \end{aligned}
 \end{equation}
 
-So we can safely represent any LP problem in its standard form,
+So we can safely represent any Linear Programming (LP) problem in its standard form,
 with only non-negative variables and only equality constraints.
+% \fi
+
+
+
+
+
+% \subsection{What about LPs in standard form}
+% ----------------------------
+\subsubsection{Example}
+% \subsubsection{Example 1:}
+
+The LP with equalities and in-equalities
+\begin{equation}
+    \begin{aligned}
+        \label{eq:mixed_equal_and_inequal}
+        \text{Minimize} \qquad &
+            \mathbf{c}^T  \mathbf{\color{red} x}
+        \\
+        \text{s.t.} \qquad &
+            \begin{cases}
+                \mathbf{A}^{(e)}  \mathbf{\color{red} x}  &  =     \mathbf{b}^{(e)}  {\color{gray} \quad \in \mathbb{R}^{m^{(e)} \times 1}}  \\
+                \mathbf{A}^{(i)}  \mathbf{\color{red} x}  &  \geq  \mathbf{b}^{(i)}  {\color{gray} \quad \in \mathbb{R}^{m^{(i)} \times 1}}  \\
+                                  \mathbf{\color{red} x}  &  \geq  \mathbf{0}        {\color{gray} \quad \in \mathbb{R}^{n \times 1}}  \\
+            \end{cases}
+    \end{aligned}
+\end{equation}
+% can be transformed to elininate in-equalities
+can be transformed to a standard form without in-equalities
+\begin{equation}
+    \begin{aligned}
+        \label{eq:only_equal}
+        \text{Minimize} \qquad &
+            \mathbf{c}^T  \mathbf{\color{red} x}
+        \\
+        \text{s.t.} \qquad &
+            \begin{cases}
+                \mathbf{A}^{(e)}  \mathbf{\color{red} x}                 &  =     \mathbf{b}^{(e)}  {\color{gray} \quad \in \mathbb{R}^{m^{(e)} \times 1}}  \\
+                \mathbf{A}^{(i)}  \mathbf{\color{red} x}  -  \mathbf{y}  &  =     \mathbf{b}^{(i)}  {\color{gray} \quad \in \mathbb{R}^{m^{(i)} \times 1}}  \\
+                                  \mathbf{\color{red} x}                 &  \geq  \mathbf{0}        {\color{gray} \quad \in \mathbb{R}^{n       \times 1}}  \\
+                                  \mathbf{\color{red} y}                 &  \geq  \mathbf{0}        {\color{gray} \quad \in \mathbb{R}^{m^{(i)} \times 1}}  \\
+            \end{cases}
+    \end{aligned}
+\end{equation}
+
+
 
 
 % =================================================================
+% \iffalse
+\subsection{In-equality Form of LP}
+
+Conversely,
+any equality constraint can also be converted into in-equality constraints,
+by using a pair of "opposite" constraints.
+
+\begin{equation}
+    \begin{aligned}
+        \label{eq:cons_equal_to_inequal}
+        \mathbf{a}_i^T  \mathbf{x}  =  b_i
+        & \qquad \Leftrightarrow \qquad
+        \begin{cases}
+            \mathbf{a}_i^T \mathbf{x}  \geq  b_i \\
+            \mathbf{a}_i^T \mathbf{x}  \leq  b_i \\
+        \end{cases}
+        \\
+        & \qquad \Leftrightarrow \qquad
+        \begin{cases}
+            +\mathbf{a}_i^T \mathbf{x}  \geq  +b_i \\
+            -\mathbf{a}_i^T \mathbf{x}  \geq  -b_i \\
+        \end{cases}
+        \\
+        & \qquad \Leftrightarrow \qquad
+        \begin{cases}
+            \begin{bmatrix}  \mathbf{a}_i^T  \\  -\mathbf{a}_i^T  \end{bmatrix}
+            \mathbf{x}
+            &\geq
+            \begin{bmatrix}  +b_i  \\  -b_i  \end{bmatrix}
+        \end{cases}
+    \end{aligned}
+\end{equation}
+
+
+
+% ----------------------------
+\subsubsection{Example}
+
+The LP with equalities and in-equalities Eq.(\ref{eq:mixed_equal_and_inequal})
+can also be transformed to an in-equality form without equalities
+\begin{equation}
+    \begin{aligned}
+        \label{eq:only_inequal}
+        \text{Minimize} \qquad &
+            \mathbf{c}^T  \mathbf{\color{red} x}
+        \\
+        \text{s.t.} \qquad &
+            \begin{cases}
+                +\mathbf{A}^{(e)}  \mathbf{\color{red} x}  &  \geq  +\mathbf{b}^{(e)}  {\color{gray} \quad \in \mathbb{R}^{m^{(e)} \times 1}}  \\
+                -\mathbf{A}^{(e)}  \mathbf{\color{red} x}  &  \geq  -\mathbf{b}^{(e)}  {\color{gray} \quad \in \mathbb{R}^{m^{(e)} \times 1}}  \\
+                 \mathbf{A}^{(i)}  \mathbf{\color{red} x}  &  \geq   \mathbf{b}^{(i)}  {\color{gray} \quad \in \mathbb{R}^{m^{(i)} \times 1}}  \\
+                                   \mathbf{\color{red} x}  &  \geq   \mathbf{0}        {\color{gray} \quad \in \mathbb{R}^{n       \times 1}}  \\
+            \end{cases}
+    \end{aligned}
+\end{equation}
+
+
+
+
+
+
+
+
+
+
+% IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+\clearpage
+\vspace{30pt}
+\section{LP and Duality}
+
+% =================================================================
 \subsection{Definition of Dual}
+\label{sec:def_of_dual}
 
 Assume
 $\mathbf{A} \in \mathbb{R}^{m \times n}$
@@ -88,10 +211,10 @@ $\mathbf{b} \in \mathbb{R}^{m \times 1}$
 $\mathbf{c} \in \mathbb{R}^{n \times 1}$
 .
 % A LP problem
-The Linear Programming (LP) problem
+The LP problem \textbf{\color{blue} (in in-equality form)}
 \begin{equation}
     \begin{aligned}
-        % \label{eq:}
+        \label{eq:primal}
         \text{Minimize} \qquad &
             \mathbf{c}^T  \mathbf{\color{red} x}
         \\
@@ -104,10 +227,10 @@ The Linear Programming (LP) problem
             \end{cases}
     \end{aligned}
 \end{equation}
-has a dual problem
+has a dual problem defined as
 \begin{equation}
     \begin{aligned}
-        % \label{eq:}
+        \label{eq:dual}
         \text{Maximize} \qquad &
             \mathbf{b}^T  \mathbf{\color{red} \lambda}
         \\
@@ -118,17 +241,280 @@ has a dual problem
             \end{cases}
     \end{aligned}
 \end{equation}
+% and note that,
+and we can conclude the dual derivation process is simple:
+\begin{itemize}
+    \item  ($\mathbf{A} \Leftrightarrow \mathbf{A}^T$) coefficient matrix is transposed
+    \item  ($\mathbf{b} \Leftrightarrow \mathbf{c}$) cost and constraint vectors are interchanged
+    \item  ($\leq \  \Leftrightarrow \  \geq$) constraint in-equalities are reversed
+    \item  (maximizing $\Leftrightarrow$ minimizing) optimization direction is reversed
+\end{itemize}
+and also note that the sizes/lengths of matrices/vectors are changed.
+
+
+\vspace{20pt}
+
+
+Following this definition,
+the LP problem \textbf{\color{blue} (in standard form)}
+\begin{equation}
+    \begin{aligned}
+        \label{eq:primal_standard}
+        \text{Minimize} \qquad &
+            \mathbf{c}^T  \mathbf{\color{red} x}
+        \\
+        \text{s.t.} \qquad &
+            \begin{cases}
+                \mathbf{A}  \mathbf{\color{red} x}  &  =     \mathbf{b}  {\color{gray} \quad \in \mathbb{R}^{m \times 1}}  \\
+                            \mathbf{\color{red} x}  &  \geq  \mathbf{0}  {\color{gray} \quad \in \mathbb{R}^{n \times 1}}  \\
+            \end{cases}
+    \end{aligned}
+\end{equation}
+which can be converted into in-equality form as
+\begin{equation}
+    \begin{aligned}
+        \label{eq:primal_standard_converted}
+        \text{Minimize} \qquad &
+            \mathbf{c}^T  \mathbf{\color{red} x}
+        \\
+        \text{s.t.} \qquad &
+            \begin{cases}
+                % +\mathbf{A}  \mathbf{\color{red} x}  &  \geq  +\mathbf{b}  {\color{gray} \quad \in \mathbb{R}^{m \times 1}}  \\
+                % -\mathbf{A}  \mathbf{\color{red} x}  &  \geq  -\mathbf{b}  {\color{gray} \quad \in \mathbb{R}^{m \times 1}}  \\
+                \begin{bmatrix}  +\mathbf{A}  \\  -\mathbf{A} \end{bmatrix}
+                \mathbf{\color{red} x}
+                &  \geq
+                \begin{bmatrix}  +\mathbf{b}  \\  -\mathbf{b} \end{bmatrix}
+                {\color{gray} \quad \in \mathbb{R}^{(2m) \times 1}}  \\
+                             \mathbf{\color{red} x}  &  \geq   \mathbf{0}  {\color{gray} \quad \in \mathbb{R}^{n \times 1}}  \\
+            \end{cases}
+    \end{aligned}
+\end{equation}
+should have a dual problem as
+\begin{equation}
+    \begin{aligned}
+        \label{eq:primal_standard_dual}
+        \text{Maximize} \qquad &
+            \begin{bmatrix}  +\mathbf{b}^T  &  -\mathbf{b}^T \end{bmatrix}
+            \mathbf{\color{red} \lambda}
+        \\
+        \text{s.t.} \qquad &
+            \begin{cases}
+                \begin{bmatrix}  +\mathbf{A}^T  &  -\mathbf{A}^T \end{bmatrix}
+                \mathbf{\color{red} \lambda}  &  \leq  \mathbf{c}  {\color{gray} \quad \in \mathbb{R}^{n \times 1}}  \\
+                \mathbf{\color{red} \lambda}  &  \geq  \mathbf{0}  {\color{gray} \quad \in \mathbb{R}^{(2m) \times 1}}  \\
+            \end{cases}
+    \end{aligned}
+\end{equation}
+Partitioning $\mathbf{\lambda} {\color{gray} \in \mathbb{R}^{(2m) \times 1}}$
+as $\begin{bmatrix}  \mathbf{\lambda}_1  \\  \mathbf{\lambda}_2 \end{bmatrix}$
+and we have
+\begin{equation}
+    \begin{aligned}
+        \label{eq:primal_standard_dual_partitioned}
+        \text{Maximize} \qquad &
+            % +\mathbf{b}^T
+            % % \mathbf{\color{red} \lambda_1}
+            % {\color{red} \mathbf{\lambda}_1}
+            % -\mathbf{b}^T
+            % % \mathbf{\color{red} \lambda_2}
+            % {\color{red} \mathbf{\lambda}_2}
+            % =
+            \mathbf{b}^T
+            % (\mathbf{\color{red} \lambda_1} - \mathbf{\color{red} \lambda_2})
+            ({\color{red} \mathbf{\lambda}_1} - {\color{red} \mathbf{\lambda}_2})
+        \\
+        \text{s.t.} \qquad &
+            \begin{cases}
+                % +\mathbf{A}^T
+                % % \mathbf{\color{red} \lambda_1}
+                % {\color{red} \mathbf{\lambda}_1}
+                % -\mathbf{A}^T
+                % % \mathbf{\color{red} \lambda_2}
+                % {\color{red} \mathbf{\lambda}_2}
+                % =
+                \mathbf{A}^T
+                % (\mathbf{\color{red} \lambda_1} - \mathbf{\color{red} \lambda_2})
+                ({\color{red} \mathbf{\lambda}_1} - {\color{red} \mathbf{\lambda}_2})
+                &  \leq  \mathbf{c}  {\color{gray} \quad \in \mathbb{R}^{n \times 1}}
+                \\
+                {\color{red} \mathbf{\lambda}_1}  &  \geq  \mathbf{0}  {\color{gray} \quad \in \mathbb{R}^{(m) \times 1}}
+                \\
+                {\color{red} \mathbf{\lambda}_2}  &  \geq  \mathbf{0}  {\color{gray} \quad \in \mathbb{R}^{(m) \times 1}}
+                \\
+            \end{cases}
+    \end{aligned}
+\end{equation}
+and we can safely combine the free non-negative variables pairs $\mathbf{\lambda}' = (\mathbf{\lambda}_1 - \mathbf{\lambda}_2)$, resulting in
+\begin{equation}
+    \begin{aligned}
+        \label{eq:primal_standard_dual_partitioned_combined}
+        \text{Maximize} \qquad &
+            \mathbf{b}^T
+            % \mathbf{\color{red} \lambda'}
+            {\color{red} \mathbf{\lambda}'}
+        \\
+        \text{s.t.} \qquad &
+            \begin{cases}
+                \mathbf{A}^T
+                {\color{red} \mathbf{\lambda}'}
+                &  \leq  \mathbf{c}  {\color{gray} \quad \in \mathbb{R}^{n \times 1}}
+                \\
+                {\color{red} \mathbf{\lambda}'}  &  \geq  -\mathbf{\infty}  {\color{gray} \quad \in \mathbb{R}^{m \times 1}}
+                \\
+                & \text{\color{red}  (variables not necessarily non-negative)}
+                \\
+            \end{cases}
+    \end{aligned}
+\end{equation}
 
 
 
+
+
+% =================================================================
 \subsection{The Duality Theorem}
+
+So what is the relationship between Eq.(\ref{eq:primal}) and its dual Eq.(\ref{eq:dual}) defined in section \ref{sec:def_of_dual} ?
+
+We will explore
+% based on the pair of dual
+, based on the dual of standard form,
+Eq.(\ref{eq:primal_standard}) and Eq.(\ref{eq:primal_standard_dual_partitioned_combined}).
+
+
+% ----------------------------
+\subsubsection{Weak Duality Lemma}
+
+% If
+% $\mathbf{x}$ is feasible in Eq.(\ref{eq:primal_standard})
+% and
+% $\mathbf{\lambda}'$ is feasible in Eq.(\ref{eq:primal_standard_dual_partitioned_combined}),
+
+If
+Eq.(\ref{eq:primal_standard})
+and
+Eq.(\ref{eq:primal_standard_dual_partitioned_combined})
+are both feasible,
+then
+any feasible solution $\mathbf{x}$        for Eq.(\ref{eq:primal_standard})
+as well as
+any feasible solution $\mathbf{\lambda}'$ for Eq.(\ref{eq:primal_standard_dual_partitioned_combined})
+satisfies:
+
+
+\begin{equation}
+    \begin{aligned}
+        \label{eq:weak_duality_lemma}
+        &
+        \mathbf{b}^T
+        {\color{red} \mathbf{\lambda}'}
+        % =&
+        % {\color{red} \mathbf{\lambda}'{}^T}
+        % \mathbf{b}
+        % \\=&
+        % {\color{red} \mathbf{\lambda}'{}^T}
+        % \mathbf{A}
+        % {\color{red} \mathbf{x}}
+        \\=&
+        (
+            \mathbf{A}
+            {\color{red} \mathbf{x}}
+        )^T
+        {\color{red} \mathbf{\lambda}'}
+        % \qquad \text{\color{gray} by constraints in Eq.(\ref{eq:primal_standard})}
+        \qquad {\color{gray} \text{by} \quad
+            \mathbf{A}  \mathbf{x}  =  \mathbf{b}  \quad \text{in Eq.(\ref{eq:primal_standard})}
+        }
+        \\=&
+        {\color{red} \mathbf{x}^T}
+        (
+            \mathbf{A}^T
+            {\color{red} \mathbf{\lambda}'}
+        )
+        \\ \leq &
+        {\color{red} \mathbf{x}^T}
+        \mathbf{c}
+        % \qquad \text{\color{gray} by constraints in Eq.(\ref{eq:primal_standard_dual_partitioned_combined})}
+        \qquad {\color{gray} \text{by} \quad
+            \begin{cases}
+                \mathbf{A}^T  \mathbf{\lambda}'  \leq  \mathbf{c}  \quad \text{in Eq.(\ref{eq:primal_standard_dual_partitioned_combined})}
+                \\
+                \mathbf{x} \geq \mathbf{0}                         \quad \text{in Eq.(\ref{eq:primal_standard})}
+            \end{cases}
+        }
+        \\=&
+        \mathbf{c}^T
+        {\color{red} \mathbf{x}}
+    \end{aligned}
+\end{equation}
+% meaning that the objectives of a pair of feasible solutions
+meaning that,
+\begin{itemize}
+    \item
+    the objective of \textbf{any feasible} solution of a standard form LP as Eq.(\ref{eq:primal_standard})
+    should always be larger than or equal to
+    the objective of \textbf{any feasible} solution of its dual as Eq.(\ref{eq:primal_standard_dual_partitioned_combined}).
+\end{itemize}
+and therefore,
+\begin{itemize}
+    \item
+    If either problem has an unbounded optimal objective,
+    the other problem will be in-feasible.
+    \item
+    If both Eq.(\ref{eq:primal_standard}) and Eq.(\ref{eq:primal_standard_dual_partitioned_combined}) are feasible,
+    the objective of \textbf{the optimal} solution of a standard form LP as Eq.(\ref{eq:primal_standard})
+    should always be larger than or equal to
+    the objective of \textbf{the optimal} solution of its dual as Eq.(\ref{eq:primal_standard_dual_partitioned_combined}).
+    % (Note that Eq.(\ref{eq:primal_standard}) seeks for minimum, and Eq.(\ref{eq:primal_standard_dual_partitioned_combined}) seeks for maximum.)
+    \begin{itemize}
+        \item
+        If we come across a pair of feasible solutions $(\mathbf{x}, \mathbf{\lambda}')$ where the equality holds,
+        then they should be (one of) the corresponding optimal solutions of each problem.
+    \end{itemize}
+\end{itemize}
+(Note that Eq.(\ref{eq:primal_standard}) seeks for minimum, and Eq.(\ref{eq:primal_standard_dual_partitioned_combined}) seeks for maximum.)
+
+
+
+% ----------------------------
+\subsubsection{Strong Duality Theorem}
+
+% But, whether we can achieve this equality?
+% But, can we (always) achieve this equality in Eq.(\ref{eq:weak_duality_lemma})?
+However,
+the above comparison is weak, and
+these questions currently remain:
+\begin{itemize}
+    \item
+    If either problem is in-feasible,
+    should the other problem have an unbounded optimal objective?
+    \item
+    If either problem has a finite optimal objective,
+    should the other problem also have a finite optimal objective?
+    \item
+    If both Eq.(\ref{eq:primal_standard}) and Eq.(\ref{eq:primal_standard_dual_partitioned_combined}) are feasible,
+    % can we (always?) achieve that equality in Eq.(\ref{eq:weak_duality_lemma}),
+    % e.g.,
+    % can the two problems (always?) have the same optimal objective?
+    in which case the two problems have the equal optimal objective?
+\end{itemize}
+
+TODO
+
+
+\begin{equation}
+    \begin{aligned}
+        % \label{eq:}
+    \end{aligned}
+\end{equation}
 
 
 
 
 \begin{equation}
     \begin{aligned}
-        \label{eq:}
+        % \label{eq:}
     \end{aligned}
 \end{equation}
 

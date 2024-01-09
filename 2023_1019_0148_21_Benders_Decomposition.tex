@@ -242,17 +242,17 @@ has a dual problem defined as
     \end{aligned}
 \end{equation}
 % and note that,
-and we can conclude the dual derivation process is simple:
+and we can conclude that the dual derivation process is simple:
 \begin{itemize}
     \item  ($\mathbf{A} \Leftrightarrow \mathbf{A}^T$) coefficient matrix is transposed
     \item  ($\mathbf{b} \Leftrightarrow \mathbf{c}$) cost and constraint vectors are interchanged
     \item  ($\leq \  \Leftrightarrow \  \geq$) constraint in-equalities are reversed
     \item  (maximizing $\Leftrightarrow$ minimizing) optimization direction is reversed
 \end{itemize}
-and also note that the sizes/lengths of matrices/vectors are changed.
+and also note that the sizes/lengths of matrices/vectors are changed accordingly.
 
 
-\vspace{20pt}
+\vspace{40pt}
 
 
 Following this definition,
@@ -307,7 +307,7 @@ should have a dual problem as
     \end{aligned}
 \end{equation}
 Partitioning $\mathbf{\lambda} {\color{gray} \in \mathbb{R}^{(2m) \times 1}}$
-as $\begin{bmatrix}  \mathbf{\lambda}_1  \\  \mathbf{\lambda}_2 \end{bmatrix}$
+as $\begin{bmatrix}  \mathbf{\lambda}_1  {\color{gray} \quad \in \mathbb{R}^{m \times 1}}  \\  \mathbf{\lambda}_2  {\color{gray} \quad \in \mathbb{R}^{m \times 1}} \end{bmatrix}$
 and we have
 \begin{equation}
     \begin{aligned}

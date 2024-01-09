@@ -503,13 +503,179 @@ these questions currently remain:
 TODO
 
 
+
+% IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
+\clearpage
+\vspace{30pt}
+\section{Benders Decomposition}
+
+% ----------------------------
+\subsection{To decompose the problem: a bi-level viewpoint}
+
+It may be helpful to consider the Benders decomposition (BD) algorithm as a bi-level nested loop, where
+the outer layer loop aims at optimizing some part of the set of decision variables, while
+the inner layer loop aims at optimizing the remaining part according to a given (partial) solution from the outer layer.
+% ----
+In the context of BD,
+the outer layer is called a master problem (MP), while the inner is called a sub-problem (SP).
+% ----
+
+
+In this section,
+the "part of variables" for outer and inner layer (i.e., the MP and the SP) are denoted by $\mathbf{\color{red} x}$ and $\mathbf{\color{red} y}$ respectively.
+
+
+For a given MILP (or even more generalized ?) model
+\begin{equation}
+    \begin{aligned}
+        \label{eq:benders_total_problem}
+        \text{Minimize} \qquad &
+            f_1(  \mathbf{\color{red} x}  ) + f_2(  \mathbf{\color{red} x}  ,  \mathbf{\color{red} y}  )
+        \\
+        \text{s.t.} \qquad &
+            \begin{cases}
+                (  \mathbf{\color{red} x}  ,  \mathbf{\color{red} y}  ) \in S
+                \\
+                \mathbf{\color{red} x}  \in  D_x
+                \\
+                \mathbf{\color{red} y}  \in  D_y
+            \end{cases}
+    \end{aligned}
+\end{equation}
+where $S$ defines the feasibility space (of decision variables $\mathbf{\color{red} x}$ and $\mathbf{\color{red} y}$ ) limited by the constraints,
+we can decompose it into a master problem (MP) as Eq.(\ref{eq:benders_outer_problem}) and a sub-problem (SP) as Eq.(\ref{eq:benders_inner_problem}).
+% \begin{itemize}
+%     \item  The mast
+% \end{itemize}
+\begin{equation}
+    \begin{aligned}
+        \label{eq:benders_outer_problem}
+        \text{MP:} \qquad &
+        \\
+        \text{Minimize} \qquad &
+            f_1(  \mathbf{\color{red} x}  ) + {\color{red} q}
+        \\
+        \text{s.t.} \qquad &
+            \begin{cases}
+                (  \mathbf{\color{red} x}  ,  {\color{red} q}  ) \in S'
+                \\
+                \mathbf{\color{red} x}  \in  D_x
+            \end{cases}
+    \end{aligned}
+\end{equation}
+\begin{equation}
+    \begin{aligned}
+        \label{eq:benders_inner_problem}
+        \text{SP with given} \quad \mathbf{\color{red} x} = \bar{\mathbf{x}_k} \quad & \text{at the} \quad k \text{-th outer iteration:} \qquad
+        \\
+        \text{Minimize} \qquad &
+            f_2(  \bar{\mathbf{x}_k}  ,  \mathbf{\color{red} y}  )
+        \\
+        \text{s.t.} \qquad &
+            \begin{cases}
+                (  \bar{\mathbf{x}_k}  ,  \mathbf{\color{red} y}  ) \in S
+                \\
+                \mathbf{\color{red} y}  \in  D_y
+            \end{cases}
+    \end{aligned}
+\end{equation}
+where an additional assistant variable ${\color{red} q}$ is introduced into the master problem,
+to embed the "information" about the partial objective from the sub-problem.
+These "information" will be implemented in the newly defined feasibility space $S'$
+by some techniques (which are the core difficulties of Benders decomposition methods, and will be explained in later sections).
+
+
+% It may be helpful to consider this procedure as a bi-level nested loop, where
+% % the MP corresponds to the outer layer and optimize some part of the variables, and
+% % the SP
+% the outer layer loop aims at optimizing some part of the set of decision variables (corresponding to the MP), i.e., $\mathbf{\color{red} x}$, while
+% the inner layer loop aims at optimizing the remaining part (corresponding to the SP), i.e., $\mathbf{\color{red} y}$, for a value of $\mathbf{\color{red} x}$ given by the outer layer.
+
+
+% ----------------------------
+\subsection{How the two layers interact}
+
+
+In many bi-level meta-heuristics,
+the inner layer is responsible to optimize the sub-problem,
+% so that the outer layer can evaluate the partial solution it is focusing on.
+providing clue for the outer layer to evaluate the partial solution it is focusing on.
+However, the results from the inner layer can also serve as other roles.
+
+
+In BD, the results from the inner layer are used to generate constraints (named "cuts") for the outer layer MP.
+% ----
+Note that,
+for a model that already completely expresses a real-world application,
+we can still add "redundant" constraints,
+and hopefully they may reduce the search space of variables.
+These additional constraints are referred to as "speed-up" constraints.
+% ----
+Speed-up constraints can be added before starting optimization.
+However, it is also possible to dynamically add speed-up constraints during optimization, if they cannot be obtained in advance.
+% ----
+The procedure of BD can be regarded as
+dynamically adding speed-up constraints to the master problem
+according to information found by the inner layer.
+% Specifically, the $(  \mathbf{\color{red} x}  ,  {\color{red} q}  ) \in S'$ in Eq.(\ref{eq:benders_outer_problem}) is dynamically changed,
+Specifically, the feasibility space $ S'$ in Eq.(\ref{eq:benders_outer_problem}) is dynamically changed,
+embedded with more and more information
+from the inner layer results.
+% as the iterations increase.
+
+So, how is the information expressed? How does the generated constraints look like?
+
+
+% ----------------------------
+\subsection{Techniques to generate constraints for MP}
+
+Given an outer-layer partial solution $\mathbf{\color{red} x} = \bar{\mathbf{x}_k}$,
+the inner layer has returned a (possibly approximately) optimal solution $\mathbf{\color{red} y} = \mathbf{y}^*_k$,
+with the corresponding objective value $f_2(  \bar{\mathbf{x}_k}  ,  \mathbf{y}^*_k  )$,
+of the SP.
+So what is the form of the generated speed-up constraints for MP according to $\mathbf{y}^*_k$ and $f_2(  \bar{\mathbf{x}_k}  ,  \mathbf{y}^*_k  )$?
+
+
+% ----------------------------
+% \subsubsection{A straightforward example}
+
+Let's first look at a simple example.
+% We can add a constraint
+The constraint
 \begin{equation}
     \begin{aligned}
         % \label{eq:}
+        {\color{red} q}
+        \begin{cases}
+            = f_2(  \bar{\mathbf{x}_k}  ,  \mathbf{y}^*_k  ),  &  \mathbf{\color{red} x} =    \bar{\mathbf{x}_k}, \\
+            \text{(unconstrained)}                         ,  &  \mathbf{\color{red} x} \neq \bar{\mathbf{x}_k}, \\
+        \end{cases}
     \end{aligned}
 \end{equation}
+provides precise objective for MP when $\mathbf{\color{red} x} = \bar{\mathbf{x}_k}$, and otherwise does nothing.
+%
+%
+This successfully embeds the information from inner-layer result into the outer-layer MP model.
+However, the result of the model is useless with this kind of constraints.
+The $\mathbf{\color{red} x}$ will be assigned to some value not yet listed in any of these constraints,
+so the ${\color{red} q}$ can happily escape from all of these constraints and get a value of $-\infty$,
+resulting the objective function being minimized to $( - \infty + f_1(  \mathbf{\color{red} x}  ) )$.
+% Unless all the
+% ----
+There is one exception, i.e., if all possible values of $\mathbf{\color{red} x}$ are enumerated by outer layer, solved by inner layer, and contribute a constraint.
+However, enumerating all feasible solutions is computationally impossible in most applications. (Otherwise we do not need to research on optimization methods!)
 
 
+% ----------------------------
+\subsubsection{for linear-programming-style SP}
+
+
+% ----------------------------
+\subsubsection{for more general SP}
+
+
+% ----------------------------
+\subsubsection{No-good cuts for more general SP}
 
 
 \begin{equation}

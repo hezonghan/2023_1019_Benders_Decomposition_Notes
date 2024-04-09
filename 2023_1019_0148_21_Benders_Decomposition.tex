@@ -599,20 +599,39 @@ by some techniques (which are the core difficulties of Benders decomposition met
 In many bi-level meta-heuristics,
 the inner layer is responsible to optimize the sub-problem,
 % so that the outer layer can evaluate the partial solution it is focusing on.
-providing clue for the outer layer to evaluate the partial solution it is focusing on.
+providing \textit{clue} for the outer layer to evaluate the partial solution it is focusing on.
+% ----
 However, the results from the inner layer can also serve as other roles.
-
-
+% ----
 In BD, the results from the inner layer are used to generate constraints (named "cuts") for the outer layer MP.
+
+
+
 % ----
 Note that,
 for a model that already completely expresses a real-world application,
 we can still add "redundant" constraints,
 and hopefully they may reduce the search space of variables.
-These additional constraints are referred to as "speed-up" constraints.
+These additional constraints are referred to as "speed-up" constraints in some literatures \cite{0148_0227_202012}.
+
+
+
 % ----
-Speed-up constraints can be added before starting optimization.
-However, it is also possible to dynamically add speed-up constraints during optimization, if they cannot be obtained in advance.
+Constraints can be added before starting optimization.
+However, it is also possible to dynamically add constraints during optimization.  % if they cannot be obtained in advance.
+There are several motivations for dynamically adding constraints, including:
+\begin{itemize}
+    \item  The constraints cannot be obtained in advance (before starting optimization).
+        For example, BD generates new constraints with the help of computational results from the inner layer.
+    \item  There are too many constraints, which may not all be necessary to be added in advance.
+        For example, the MILP model proposed by Dantzig et al in 1954 \cite{milp_tsp_1954_DFJ}
+        for Traveling Salesman Problem (TSP) with $|V|$ locations has $O(2^{|V|})$ constraints for avoiding sub-tours.
+    \item  \dots
+\end{itemize}
+Fortunately, some MILP solvers support adding constraints in various ways.
+
+
+
 % ----
 The procedure of BD can be regarded as
 dynamically adding speed-up constraints to the master problem
@@ -656,8 +675,8 @@ provides precise objective for MP when $\mathbf{\color{red} x} = \bar{\mathbf{x}
 %
 %
 This successfully embeds the information from inner-layer result into the outer-layer MP model.
-However, the result of the model is useless with this kind of constraints.
-The $\mathbf{\color{red} x}$ will be assigned to some value not yet listed in any of these constraints,
+However, the result of the model is useless with this kind of constraints --
+At later iterations, the $\mathbf{\color{red} x}$ will be assigned to some value not yet mentioned by any of these constraints,
 so the ${\color{red} q}$ can happily escape from all of these constraints and get a value of $-\infty$,
 resulting the objective function being minimized to $( - \infty + f_1(  \mathbf{\color{red} x}  ) )$.
 % Unless all the
